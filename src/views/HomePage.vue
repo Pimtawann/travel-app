@@ -1,5 +1,6 @@
 <script setup>
 import Navbar from '../components/Navbar.vue'
+import SearchBar from '../components/SearchBar.vue'
 </script>
 
 <template>
@@ -14,9 +15,14 @@ import Navbar from '../components/Navbar.vue'
             Welcome to <span class="text-secondary">Travvy.</span>
           </p>
 
-          <p class="text-xl md:text-3xl text-secondary mb-4">
-            Let’s explore wonderful places together.
+          <p class="text-xl md:text-3xl text-secondary mb-8">
+            Let's explore wonderful places together.
           </p>
+
+          <!-- Search Bar -->
+          <div class="mt-8">
+            <SearchBar />
+          </div>
         </div>
       </div>
     </section>
