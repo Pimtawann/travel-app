@@ -1,5 +1,8 @@
 <template>
   <div class="register-page min-h-screen flex items-center justify-center px-8">
+    <!-- Success Modal -->
+    <SuccessModal :show="showSuccessModal" message="Logging you in..." />
+
     <div class="max-w-md w-full">
       <div class="text-center mb-8">
         <h1 class="text-4xl font-bold text-primary mb-2">Travvy.</h1>
@@ -120,7 +123,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { authAPI } from '../api.js'
+import { authAPI, tokenService } from '../api.js'
+import SuccessModal from '../components/SuccessModal.vue'
 
 const router = useRouter()
 const displayName = ref('')
@@ -131,6 +135,7 @@ const emailError = ref('')
 const passwordError = ref('')
 const registerError = ref('')
 const isSubmitting = ref(false)
+const showSuccessModal = ref(false)
 
 // Display name validation
 const validateDisplayName = () => {
@@ -219,10 +224,23 @@ const handleRegister = async () => {
   try {
     isSubmitting.value = true
 
+    // Call backend API to register
     await authAPI.register(email.value, password.value, displayName.value)
 
-    // Success - redirect to login
-    router.push('/login')
+    // Show success modal
+    showSuccessModal.value = true
+
+    // Auto login (run in parallel with modal display)
+    const token = await authAPI.login(email.value, password.value)
+
+    // Save token to localStorage
+    tokenService.saveToken(token)
+
+    // Wait at least 1.5 seconds to show modal
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    // Redirect to homepage
+    router.push('/')
   } catch (error) {
     const errorMessage = error.message || 'Registration failed'
 
@@ -233,6 +251,7 @@ const handleRegister = async () => {
     }
   } finally {
     isSubmitting.value = false
+    showSuccessModal.value = false
   }
 }
 </script>
