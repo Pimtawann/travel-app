@@ -19,7 +19,7 @@
         </div>
 
         <!-- Logged In -->
-        <div v-else class="flex items-center gap-4">
+        <div v-else class="flex items-center gap-8">
           <!-- User Menu -->
           <div class="relative" ref="dropdownRef">
             <div
@@ -35,7 +35,7 @@
             <!-- Dropdown Menu -->
             <div
               v-if="showDropdown"
-              class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border-2 border-cream-3 py-2 z-50"
+              class="absolute -right-3 mt-2 w-40 md:w-50 bg-white rounded-xl shadow-2xl border-2 border-cream-3 py-2 z-50"
             >
               <router-link
                 to="/my-trips"
@@ -72,6 +72,7 @@
               </button>
             </div>
           </div>
+          <!-- Create Button -->
           <div>
             <button class="hidden md:block bg-primary text-background rounded-xl font-medium text-lg hover:bg-secondary transition-colors duration-200 cursor-pointer">
               + Create Trip
