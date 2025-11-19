@@ -1,7 +1,6 @@
 <template>
   <div class="login-page min-h-screen flex items-center justify-center px-8">
     <div class="max-w-md w-full">
-      <!-- Logo/Brand -->
       <div class="text-center mb-8">
         <h1 class="text-4xl font-bold text-primary mb-2">Travvy.</h1>
         <p class="text-lg text-secondary">Welcome back!</p>
@@ -74,9 +73,15 @@
 
           <button
             type="submit"
-            class="w-full px-6 py-3 bg-primary text-background rounded-xl font-semibold text-lg hover:bg-secondary transition-all duration-300 shadow-lg hover:shadow-xl"
+            :disabled="isSubmitting"
+            :class="[
+              'w-full px-6 py-3 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg',
+              isSubmitting
+                ? 'bg-secondary/50 text-background/70 cursor-not-allowed'
+                : 'bg-primary text-background hover:bg-secondary hover:shadow-xl'
+            ]"
           >
-            Login
+            {{ isSubmitting ? 'Logging in...' : 'Login' }}
           </button>
         </form>
 
@@ -98,6 +103,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { authAPI, tokenService } from '../api.js'
 
 const router = useRouter()
 const email = ref('')
@@ -105,6 +111,7 @@ const password = ref('')
 const emailError = ref('')
 const passwordError = ref('')
 const loginError = ref('')
+const isSubmitting = ref(false)
 
 // Email validation
 const validateEmail = () => {
@@ -151,19 +158,36 @@ const clearPasswordError = () => {
   }
 }
 
-const handleLogin = () => {
+const handleLogin = async () => {
   // Clear previous login error
   loginError.value = ''
 
   validateEmail()
   validatePassword()
 
-  if (!emailError.value && !passwordError.value) {
-    console.log('Login:', { email: email.value, password: password.value })
+  // If any validation errors, don't proceed
+  if (emailError.value || passwordError.value) {
+    return
+  }
 
-    setTimeout(() => {
-      loginError.value = 'Invalid email or password. Please try again.'
-    }, 500)
+  // Prevent multiple submissions
+  if (isSubmitting.value) {
+    return
+  }
+
+  try {
+    isSubmitting.value = true
+
+    const token = await authAPI.login(email.value, password.value)
+
+    tokenService.saveToken(token)
+
+    // Success - redirect to homepage
+    router.push('/')
+  } catch (error) {
+    loginError.value = error.message || 'Invalid email or password. Please try again.'
+  } finally {
+    isSubmitting.value = false
   }
 }
 </script>

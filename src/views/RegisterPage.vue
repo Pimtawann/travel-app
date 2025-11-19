@@ -10,27 +10,27 @@
       <div class="bg-white rounded-2xl shadow-xl border-2 border-cream-3 p-8">
         <h2 class="flex justify-center text-2xl font-bold text-primary mb-6">Register</h2>
 
-        <form @submit.prevent="handleRegister" class="space-y-3">
-          <!-- Username Input -->
+        <form @submit.prevent="handleRegister" class="space-y-2">
+          <!-- Display Name Input -->
           <div>
-            <label for="username" class="block text-sm font-semibold text-primary mb-2">
-              Username
+            <label for="displayName" class="block text-sm font-semibold text-primary mb-2">
+              Display Name
             </label>
             <input
-              id="username"
+              id="displayName"
               type="text"
-              v-model="username"
-              @blur="validateUsername"
-              @input="clearUsernameError"
-              placeholder="Enter your username"
+              v-model="displayName"
+              @blur="validateDisplayName"
+              @input="clearDisplayNameError"
+              placeholder="Enter your display name"
               :class="[
                 'w-full px-4 py-3 border-2 rounded-xl text-primary placeholder-secondary/50 outline-none transition-colors duration-300',
-                usernameError ? 'border-red-500 focus:border-red-500' : 'border-cream-3 focus:border-secondary'
+                displayNameError ? 'border-red-500 focus:border-red-500' : 'border-cream-3 focus:border-secondary'
               ]"
             />
             <div class="h-6 mt-1">
-              <p v-if="usernameError" class="text-sm text-red-500">
-                {{ usernameError }}
+              <p v-if="displayNameError" class="text-sm text-red-500">
+                {{ displayNameError }}
               </p>
             </div>
           </div>
@@ -81,13 +81,25 @@
                 {{ passwordError }}
               </p>
             </div>
+            <!-- Register Error Message -->
+            <div class="h-6 mt-1">
+              <p v-if="registerError" class="text-sm text-red-500 text-center">
+                {{ registerError }}
+              </p>
+            </div>
           </div>
 
           <button
             type="submit"
-            class="w-full px-6 py-3 bg-primary text-background rounded-xl font-semibold text-lg hover:bg-secondary transition-all duration-300 shadow-lg hover:shadow-xl"
+            :disabled="isSubmitting"
+            :class="[
+              'w-full px-6 py-3 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg',
+              isSubmitting
+                ? 'bg-secondary/50 text-background/70 cursor-not-allowed'
+                : 'bg-primary text-background hover:bg-secondary hover:shadow-xl'
+            ]"
           >
-            Register
+            {{ isSubmitting ? 'Registering...' : 'Register' }}
           </button>
         </form>
 
@@ -108,31 +120,28 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { authAPI } from '../api.js'
 
 const router = useRouter()
-const username = ref('')
+const displayName = ref('')
 const email = ref('')
 const password = ref('')
-const usernameError = ref('')
+const displayNameError = ref('')
 const emailError = ref('')
 const passwordError = ref('')
+const registerError = ref('')
+const isSubmitting = ref(false)
 
-// Simulate existing users in database
-const existingUsernames = ['admin', 'user123', 'testuser']
-const existingEmails = ['admin@example.com', 'user@test.com']
-
-// Username validation
-const validateUsername = () => {
-  if (!username.value) {
-    usernameError.value = 'Username is required'
-  } else if (username.value.length < 3) {
-    usernameError.value = 'Must be at least 3 characters'
-  } else if (username.value.length > 20) {
-    usernameError.value = 'Must not exceed 20 characters'
-  } else if (!/^[a-zA-Z0-9_]+$/.test(username.value)) {
-    usernameError.value = 'Only letters, numbers, and underscores'
+// Display name validation
+const validateDisplayName = () => {
+  if (!displayName.value) {
+    displayNameError.value = 'Display name is required'
+  } else if (displayName.value.length < 3) {
+    displayNameError.value = 'Must be at least 3 characters'
+  } else if (displayName.value.length > 100) {
+    displayNameError.value = 'Must not exceed 100 characters'
   } else {
-    usernameError.value = ''
+    displayNameError.value = ''
   }
 }
 
@@ -161,9 +170,12 @@ const validatePassword = () => {
 }
 
 // Clear errors when user starts typing
-const clearUsernameError = () => {
-  if (usernameError.value) {
-    usernameError.value = ''
+const clearDisplayNameError = () => {
+  if (displayNameError.value) {
+    displayNameError.value = ''
+  }
+  if (registerError.value) {
+    registerError.value = ''
   }
 }
 
@@ -171,44 +183,57 @@ const clearEmailError = () => {
   if (emailError.value) {
     emailError.value = ''
   }
+  if (registerError.value) {
+    registerError.value = ''
+  }
 }
 
 const clearPasswordError = () => {
   if (passwordError.value) {
     passwordError.value = ''
   }
+  if (registerError.value) {
+    registerError.value = ''
+  }
 }
 
-const handleRegister = () => {
-  // Validate all fields (basic validation)
-  validateUsername()
+const handleRegister = async () => {
+  // Clear previous register error
+  registerError.value = ''
+
+  // Validate all fields
+  validateDisplayName()
   validateEmail()
   validatePassword()
 
-  // Check for duplicates for fields that passed basic validation
-  setTimeout(() => {
-    // Check username duplicate only if passed basic validation
-    if (!usernameError.value && username.value) {
-      if (existingUsernames.includes(username.value.toLowerCase())) {
-        usernameError.value = 'Username already taken'
-      }
-    }
+  // If any validation errors, don't proceed
+  if (displayNameError.value || emailError.value || passwordError.value) {
+    return
+  }
 
-    // Check email duplicate only if passed basic validation
-    if (!emailError.value && email.value) {
-      if (existingEmails.includes(email.value.toLowerCase())) {
-        emailError.value = 'Email already registered'
-      }
-    }
+  // Prevent multiple submissions
+  if (isSubmitting.value) {
+    return
+  }
 
-    // Only proceed if ALL fields are valid (after duplicate check)
-    setTimeout(() => {
-      if (!usernameError.value && !emailError.value && !passwordError.value) {
-        console.log('Registration successful! Redirecting to login...')
-        router.push('/login')
-      }
-    }, 100)
-  }, 500)
+  try {
+    isSubmitting.value = true
+
+    await authAPI.register(email.value, password.value, displayName.value)
+
+    // Success - redirect to login
+    router.push('/login')
+  } catch (error) {
+    const errorMessage = error.message || 'Registration failed'
+
+    if (errorMessage.toLowerCase().includes('email') && errorMessage.toLowerCase().includes('already exists')) {
+      emailError.value = 'Email already registered'
+    } else {
+      registerError.value = errorMessage
+    }
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
 
