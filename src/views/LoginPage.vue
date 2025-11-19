@@ -104,8 +104,10 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { authAPI, tokenService } from '../api.js'
+import { useAuth } from '../composables/useAuth.js'
 
 const router = useRouter()
+const { setUser } = useAuth()
 const email = ref('')
 const password = ref('')
 const emailError = ref('')
@@ -181,6 +183,13 @@ const handleLogin = async () => {
     const token = await authAPI.login(email.value, password.value)
 
     tokenService.saveToken(token)
+
+    // Set user data (use email as displayName if not found in localStorage)
+    const displayName = localStorage.getItem('displayName') || email.value
+    setUser({
+      email: email.value,
+      displayName: displayName
+    })
 
     // Success - redirect to homepage
     router.push('/')
