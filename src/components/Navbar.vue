@@ -49,6 +49,17 @@
               </router-link>
 
               <router-link
+                to="/create-trip"
+                class="md:hidden flex items-center gap-3 px-4 py-3 hover:bg-cream-1 transition-colors cursor-pointer"
+                @click="closeDropdown"
+              >
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                <span class="font-medium text-primary">Create Trip</span>
+              </router-link>
+
+              <router-link
                 to="/profile"
                 class="flex items-center gap-3 px-4 py-3 hover:bg-cream-1 transition-colors cursor-pointer"
                 @click="closeDropdown"
@@ -74,9 +85,11 @@
           </div>
           <!-- Create Button -->
           <div>
-            <button class="hidden md:block bg-primary text-background rounded-xl font-medium text-lg hover:bg-secondary transition-colors duration-200 cursor-pointer">
-              + Create Trip
-            </button>
+            <router-link to="/create-trip">
+              <button class="hidden md:block bg-primary text-background rounded-xl font-medium text-lg hover:bg-secondary transition-colors duration-200 cursor-pointer">
+                + Create Trip
+              </button>
+          </router-link>
           </div>
         </div>
       </div>
@@ -85,7 +98,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth.js'
 
@@ -93,11 +106,6 @@ const router = useRouter()
 const { user, isAuthenticated, initAuth, clearUser } = useAuth()
 const showDropdown = ref(false)
 const dropdownRef = ref(null)
-
-// Get user initial for avatar
-const userInitial = computed(() => {
-  return user.value?.displayName?.charAt(0).toUpperCase() || 'U'
-})
 
 // Initialize auth on mount
 onMounted(() => {
