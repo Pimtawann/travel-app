@@ -23,7 +23,7 @@ export function useAuth() {
         const payload = JSON.parse(atob(token.split('.')[1]))
         user.value = {
           email: payload.sub,
-          displayName: localStorage.getItem('displayName') || payload.sub
+          displayName: payload.displayName || localStorage.getItem('displayName') || payload.sub
         }
       } catch (error) {
         console.error('Failed to decode token:', error)

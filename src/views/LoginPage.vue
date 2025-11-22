@@ -184,12 +184,24 @@ const handleLogin = async () => {
 
     tokenService.saveToken(token)
 
-    // Set user data (use email as displayName if not found in localStorage)
-    const displayName = localStorage.getItem('displayName') || email.value
-    setUser({
-      email: email.value,
-      displayName: displayName
-    })
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      const displayName = payload.displayName || email.value
+
+      if (payload.displayName) {
+        localStorage.setItem('displayName', payload.displayName)
+      }
+
+      setUser({
+        email: email.value,
+        displayName: displayName
+      })
+    } catch (decodeError) {
+      setUser({
+        email: email.value,
+        displayName: email.value
+      })
+    }
 
     // Success - redirect to homepage
     router.push('/')
