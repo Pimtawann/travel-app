@@ -31,15 +31,17 @@ const fetchTrips = async () => {
 }
 
 const handleSearch = async (query) => {
-  if (!query || query.trim() === '') {
-    filteredTrips.value = trips.value
-    return
-  }
-
   try {
     isLoading.value = true
-    const data = await tripsAPI.searchTrips(query)
-    filteredTrips.value = data
+
+    if (!query || query.trim() === '') {
+      const data = await tripsAPI.getAllTrips()
+      trips.value = data
+      filteredTrips.value = data
+    } else {
+      const data = await tripsAPI.searchTrips(query)
+      filteredTrips.value = data
+    }
   } catch (error) {
     console.error('Failed to search trips:', error)
   } finally {
