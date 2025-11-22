@@ -124,9 +124,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { authAPI, tokenService } from '../api.js'
+import { useAuth } from '../composables/useAuth.js'
 import SuccessModal from '../components/SuccessModal.vue'
 
 const router = useRouter()
+const { setUser } = useAuth()
 const displayName = ref('')
 const email = ref('')
 const password = ref('')
@@ -233,8 +235,15 @@ const handleRegister = async () => {
     // Auto login (run in parallel with modal display)
     const token = await authAPI.login(email.value, password.value)
 
-    // Save token to localStorage
+    // Save token and user data to localStorage
     tokenService.saveToken(token)
+    localStorage.setItem('displayName', displayName.value)
+
+    // Set user in auth state
+    setUser({
+      email: email.value,
+      displayName: displayName.value
+    })
 
     // Wait at least 1.5 seconds to show modal
     await new Promise(resolve => setTimeout(resolve, 1500))

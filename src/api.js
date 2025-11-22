@@ -42,6 +42,30 @@ export const authAPI = {
   },
 }
 
+export const tripsAPI = {
+  async getAllTrips() {
+    try {
+      const response = await axiosInstance.get('/api/trips')
+      return response.data
+    } catch (error) {
+      console.error('Failed to fetch trips:', error.response?.data || error.message)
+      throw new Error(error.response?.data?.message || 'Failed to fetch trips')
+    }
+  },
+
+  async searchTrips(query) {
+    try {
+      const response = await axiosInstance.get('/api/trips', {
+        params: { query }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Failed to search trips:', error.response?.data || error.message)
+      throw new Error(error.response?.data?.message || 'Failed to search trips')
+    }
+  },
+}
+
 export const tokenService = {
   saveToken(token) {
     localStorage.setItem('authToken', token)
