@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import SearchBar from '../components/SearchBar.vue'
 import TripCard from '../components/TripCard.vue'
+import Pagination from '../components/Pagination.vue'
 import { tripsAPI } from '../api.js'
 import { trio } from 'ldrs'
 
@@ -12,6 +13,8 @@ const searchQuery = ref('')
 const trips = ref([])
 const filteredTrips = ref([])
 const isLoading = ref(false)
+const currentPage = ref(1)
+const itemsPerPage = 10
 
 onMounted(async () => {
   await fetchTrips()
@@ -33,6 +36,7 @@ const fetchTrips = async () => {
 const handleSearch = async (query) => {
   try {
     isLoading.value = true
+    resetPagination() // Reset to page 1 when searching
 
     if (!query || query.trim() === '') {
       const data = await tripsAPI.getAllTrips()
@@ -52,6 +56,27 @@ const handleSearch = async (query) => {
 const handleTagClick = (tag) => {
   searchQuery.value = tag
   handleSearch(tag)
+}
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredTrips.value.length / itemsPerPage)
+})
+
+const paginatedTrips = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return filteredTrips.value.slice(start, end)
+})
+
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+}
+
+const resetPagination = () => {
+  currentPage.value = 1
 }
 </script>
 
@@ -94,13 +119,24 @@ const handleTagClick = (tag) => {
         </div>
 
         <!-- Trips List -->
-        <div v-else class="max-w-5xl mx-auto space-y-6">
-          <TripCard
-            v-for="trip in filteredTrips"
-            :key="trip.id"
-            :trip="trip"
-            @tag-click="handleTagClick"
+        <div v-else>
+          <div class="max-w-5xl mx-auto space-y-6">
+            <TripCard
+              v-for="trip in paginatedTrips"
+              :key="trip.id"
+              :trip="trip"
+              @tag-click="handleTagClick"
+            />
+          </div>
+
+          <!-- Pagination -->
+          <div class="pt-4">
+          <Pagination
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            @page-change="changePage"
           />
+          </div>
         </div>
       </div>
     </section>

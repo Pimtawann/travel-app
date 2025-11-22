@@ -19,14 +19,14 @@
         </div>
 
         <!-- Logged In -->
-        <div v-else class="flex items-center gap-8">
+        <div v-else class="flex items-center md:gap-8">
           <!-- User Menu -->
           <div class="relative" ref="dropdownRef">
             <div
               @click="toggleDropdown"
               class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity duration-200"
             >
-              <span class="font-semibold text-primary text-lg">{{ user?.displayName }}</span>
+              <span class="font-semibold text-primary text-lg md:text-xl">{{ user?.displayName }}</span>
               <svg class="w-4 h-4 text-primary transition-transform duration-200" :class="{ 'rotate-180': showDropdown }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
