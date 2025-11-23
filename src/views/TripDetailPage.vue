@@ -65,7 +65,7 @@ const fetchTrip = async () => {
       <!-- Trip Info -->
       <div class="space-y-6">
         <!-- Title -->
-        <h1 class="text-4xl md:!text-4xl font-semibold text-primary">
+        <h1 class="!text-2xl md:!text-4xl font-semibold text-primary">
           {{ trip.title }}
         </h1>
 
