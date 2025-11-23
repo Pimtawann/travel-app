@@ -27,29 +27,17 @@
   --color-secondary-900: #1e1612;
   --color-secondary: #967259;
 
-  --color-tertiary-50: #f6f7f6;
-  --color-tertiary-100: #e9ede8;
-  --color-tertiary-200: #d3dbd1;
-  --color-tertiary-300: #bdc9ba;
-  --color-tertiary-400: #a7b7a3;
-  --color-tertiary-500: #9eab9a;
-  --color-tertiary-600: #7e897b;
-  --color-tertiary-700: #5f675c;
-  --color-tertiary-800: #3f443d;
-  --color-tertiary-900: #20221f;
-  --color-tertiary: #9eab9a;
-
-  --color-fourth-50: #fff5f0;
-  --color-fourth-100: #ffe5d9;
-  --color-fourth-200: #ffcbb3;
-  --color-fourth-300: #ffb18d;
-  --color-fourth-400: #ff9767;
-  --color-fourth-500: #ff773d;
-  --color-fourth-600: #cc5f31;
-  --color-fourth-700: #994725;
-  --color-fourth-800: #663019;
-  --color-fourth-900: #33180c;
-  --color-fourth: #ff773d;
+  --color-sky-50: #f0f3f7;
+  --color-sky-100: #dce3ed;
+  --color-sky-200: #b9c7db;
+  --color-sky-300: #96abc9;
+  --color-sky-400: #738fb7;
+  --color-sky-500: #6f8db9;
+  --color-sky-600: #597194;
+  --color-sky-700: #43556f;
+  --color-sky-800: #2c384a;
+  --color-sky-900: #161c25;
+  --color-sky: #6f8db9;
 
   --color-cream-1: #f6f2ec;
   --color-cream-2: #eee5db;
