@@ -12,7 +12,7 @@
         type="text"
         v-model="searchQuery"
         placeholder="Search destinations, cities, countries, or tags..."
-        class="flex-1 px-3 md:px-4 py-2 md:py-4 text-base md:text-lg text-primary placeholder-secondary/50 bg-transparent outline-none"
+        class="flex-1 px-3 md:px-4 md:py-4 text-base md:text-lg text-primary placeholder-secondary/50 bg-transparent outline-none"
         @keyup.enter="handleSearch"
       />
 
@@ -28,7 +28,7 @@
     <!-- Search Button (Mobile only) -->
     <button
       @click="handleSearch"
-      class="md:hidden w-full mt-3 px-6 py-4 bg-primary text-background rounded-lg font-semibold text-base hover:bg-secondary transition-all duration-300"
+      class="md:hidden w-full mt-3 px-6 !py-3 bg-primary text-background rounded-lg font-semibold text-base hover:bg-secondary transition-all duration-300"
     >
       Search
     </button>
