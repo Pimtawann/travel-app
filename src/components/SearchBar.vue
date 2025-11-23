@@ -36,14 +36,28 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 
-const searchQuery = ref('')
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: ''
+  }
+})
+
+const emit = defineEmits(['update:modelValue', 'search'])
+
+const searchQuery = computed({
+  get() {
+    return props.modelValue
+  },
+  set(value) {
+    emit('update:modelValue', value)
+  }
+})
 
 const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    console.log('Searching for:', searchQuery.value)
-  }
+  emit('search', searchQuery.value.trim())
 }
 </script>
 
