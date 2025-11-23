@@ -53,6 +53,16 @@ export const tripsAPI = {
     }
   },
 
+  async getTripById(id) {
+    try {
+      const response = await axiosInstance.get(`/api/trips/${id}`)
+      return response.data
+    } catch (error) {
+      console.error('Failed to fetch trip:', error.response?.data || error.message)
+      throw new Error(error.response?.data?.message || 'Failed to fetch trip')
+    }
+  },
+
   async searchTrips(query) {
     try {
       const response = await axiosInstance.get('/api/trips', {
