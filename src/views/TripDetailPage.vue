@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
@@ -12,11 +12,6 @@ const route = useRoute()
 const trip = ref(null)
 const isLoading = ref(false)
 const error = ref(null)
-
-const mapUrl = computed(() => {
-  if (!trip.value?.latitude || !trip.value?.longitude) return null
-  return `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${trip.value.latitude},${trip.value.longitude}&zoom=15`
-})
 
 onMounted(async () => {
   await fetchTrip()
