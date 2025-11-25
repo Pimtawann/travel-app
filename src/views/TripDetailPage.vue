@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import { tripsAPI } from '../api.js'
@@ -9,6 +9,7 @@ import { trio } from 'ldrs'
 trio.register()
 
 const route = useRoute()
+const router = useRouter()
 const trip = ref(null)
 const isLoading = ref(false)
 const error = ref(null)
@@ -29,6 +30,10 @@ const fetchTrip = async () => {
   } finally {
     isLoading.value = false
   }
+}
+
+const handleTagClick = (tag) => {
+  router.push({ path: '/', query: { search: tag } })
 }
 </script>
 
@@ -67,7 +72,8 @@ const fetchTrip = async () => {
         <!-- Tags -->
         <div v-if="trip.tags && trip.tags.length > 0" class="flex flex-wrap gap-2">
           <span v-for="tag in trip.tags" :key="tag"
-            class="!px-3 !py-1 !bg-background !border-2 !border-primary !text-primary !rounded-lg !text-sm !font-medium">
+            @click="handleTagClick(tag)"
+            class="!px-3 !py-1 !bg-background !border-2 !border-primary !text-primary !rounded-lg !text-sm !font-medium cursor-pointer hover:!bg-primary hover:!text-background transition-colors duration-200">
             {{ tag }}
           </span>
         </div>
