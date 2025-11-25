@@ -1,6 +1,6 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import { tripsAPI } from '../api.js'
@@ -9,14 +9,10 @@ import { trio } from 'ldrs'
 trio.register()
 
 const route = useRoute()
+const router = useRouter()
 const trip = ref(null)
 const isLoading = ref(false)
 const error = ref(null)
-
-const mapUrl = computed(() => {
-  if (!trip.value?.latitude || !trip.value?.longitude) return null
-  return `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${trip.value.latitude},${trip.value.longitude}&zoom=15`
-})
 
 onMounted(async () => {
   await fetchTrip()
@@ -34,6 +30,10 @@ const fetchTrip = async () => {
   } finally {
     isLoading.value = false
   }
+}
+
+const handleTagClick = (tag) => {
+  router.push({ path: '/', query: { search: tag } })
 }
 </script>
 
@@ -65,14 +65,15 @@ const fetchTrip = async () => {
       <!-- Trip Info -->
       <div class="space-y-6">
         <!-- Title -->
-        <h1 class="text-4xl md:!text-4xl font-semibold text-primary">
+        <h1 class="!text-2xl md:!text-4xl font-semibold text-primary">
           {{ trip.title }}
         </h1>
 
         <!-- Tags -->
         <div v-if="trip.tags && trip.tags.length > 0" class="flex flex-wrap gap-2">
           <span v-for="tag in trip.tags" :key="tag"
-            class="!px-3 !py-1 !bg-background !border-2 !border-primary !text-primary !rounded-lg !text-sm !font-medium">
+            @click="handleTagClick(tag)"
+            class="!px-3 !py-1 !bg-background !border-2 !border-primary !text-primary !rounded-lg !text-sm !font-medium cursor-pointer hover:!bg-primary hover:!text-background transition-colors duration-200">
             {{ tag }}
           </span>
         </div>
