@@ -53,6 +53,21 @@ export const tripsAPI = {
     }
   },
 
+  async getMyTrips() {
+    try {
+      const token = tokenService.getToken()
+      const response = await axiosInstance.get('/api/trips/mine', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Failed to fetch my trips:', error.response?.data || error.message)
+      throw new Error(error.response?.data?.message || 'Failed to fetch your trips')
+    }
+  },
+
   async getTripById(id) {
     try {
       const response = await axiosInstance.get(`/api/trips/${id}`)
@@ -72,6 +87,21 @@ export const tripsAPI = {
     } catch (error) {
       console.error('Failed to search trips:', error.response?.data || error.message)
       throw new Error(error.response?.data?.message || 'Failed to search trips')
+    }
+  },
+
+  async deleteTrip(id) {
+    try {
+      const token = tokenService.getToken()
+      const response = await axiosInstance.delete(`/api/trips/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Failed to delete trip:', error.response?.data || error.message)
+      throw new Error(error.response?.data?.message || 'Failed to delete trip')
     }
   },
 }
