@@ -106,6 +106,46 @@ export const tripsAPI = {
   },
 }
 
+export const userAPI = {
+  async getProfile() {
+    try {
+      const token = tokenService.getToken()
+      const response = await axiosInstance.get('/auth/profile', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Failed to fetch profile:', error.response?.data || error.message)
+      throw new Error(error.response?.data?.message || 'Failed to fetch profile')
+    }
+  },
+
+  async updateProfile(displayName, password) {
+    try {
+      const token = tokenService.getToken()
+      const payload = {}
+      if (displayName !== undefined && displayName !== null) {
+        payload.displayName = displayName
+      }
+      if (password !== undefined && password !== null && password !== '') {
+        payload.password = password
+      }
+
+      const response = await axiosInstance.put('/auth/profile', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Failed to update profile:', error.response?.data || error.message)
+      throw new Error(error.response?.data?.message || 'Failed to update profile')
+    }
+  },
+}
+
 export const tokenService = {
   saveToken(token) {
     localStorage.setItem('authToken', token)

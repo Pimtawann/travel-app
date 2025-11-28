@@ -4,6 +4,7 @@ import LoginPage from '../views/LoginPage.vue'
 import RegisterPage from '../views/RegisterPage.vue'
 import TripDetailPage from '../views/TripDetailPage.vue'
 import MyTripsPage from '../views/MyTripsPage.vue'
+import ProfilePage from '../views/ProfilePage.vue'
 import { tokenService } from '../api.js'
 
 const routes = [
@@ -21,6 +22,12 @@ const routes = [
     path: '/my-trips',
     name: 'MyTrips',
     component: MyTripsPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: ProfilePage,
     meta: { requiresAuth: true }
   },
   {

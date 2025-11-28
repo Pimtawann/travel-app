@@ -27,7 +27,7 @@
         <li>
           <router-link to="/create-trip"
             class="flex items-center gap-3 px-6 py-3 text-primary bg-cream-2 hover:bg-cream-4 transition-colors duration-200 group"
-            active-class="bg-background border-l-8 border-primary">
+            active-class="bg-cream-4 border-l-8 border-primary">
             <svg class="w-6 h-6 text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -40,7 +40,7 @@
         <li>
           <router-link to="/profile"
             class="flex items-center gap-3 px-6 py-3 text-primary bg-cream-2 hover:bg-cream-4 transition-colors duration-200 group"
-            active-class="bg-background border-l-8 border-primary">
+            active-class="bg-cream-4 border-l-8 border-primary">
             <svg class="w-6 h-6 text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
