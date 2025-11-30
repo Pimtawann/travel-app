@@ -9,6 +9,23 @@ const axiosInstance = axios.create({
   },
 })
 
+// Response interceptor to handle token expiration
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Check if error is due to unauthorized (401) - token expired
+    if (error.response && error.response.status === 401) {
+      // Clear token and user data
+      tokenService.removeToken()
+      localStorage.removeItem('displayName')
+
+      // Redirect to homepage
+      window.location.href = '/'
+    }
+    return Promise.reject(error)
+  }
+)
+
 export const authAPI = {
   async register(email, password, displayName) {
     try {
