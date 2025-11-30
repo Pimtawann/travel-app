@@ -21,7 +21,11 @@
       <!-- Error State -->
       <div v-else-if="error" class="flex justify-center items-center min-h-[50vh]">
         <div class="text-center">
-          <p class="text-2xl md:text-3xl font-semibold text-red-600">{{ error }}</p>
+          <svg class="w-16 h-16 text-red-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+          <h3 class="text-2xl md:text-3xl font-semibold text-primary mb-2">Unable to load your trips</h3>
+          <p class="text-secondary mb-6">Please try refreshing the page or logging in again.</p>
         </div>
       </div>
 
