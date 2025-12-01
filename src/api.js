@@ -121,6 +121,21 @@ export const tripsAPI = {
       throw new Error(error.response?.data?.message || 'Failed to delete trip')
     }
   },
+
+  async createTrip(tripData) {
+    try {
+      const token = tokenService.getToken()
+      const response = await axiosInstance.post('/api/trips', tripData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Failed to create trip:', error.response?.data || error.message)
+      throw new Error(error.response?.data?.message || 'Failed to create trip')
+    }
+  },
 }
 
 export const userAPI = {
@@ -159,6 +174,27 @@ export const userAPI = {
     } catch (error) {
       console.error('Failed to update profile:', error.response?.data || error.message)
       throw new Error(error.response?.data?.message || 'Failed to update profile')
+    }
+  },
+}
+
+export const fileAPI = {
+  async uploadFile(file) {
+    try {
+      const token = tokenService.getToken()
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await axiosInstance.post('/api/files/upload', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      return response.data.url
+    } catch (error) {
+      console.error('Failed to upload file:', error.response?.data || error.message)
+      throw new Error(error.response?.data?.message || 'Failed to upload file')
     }
   },
 }
