@@ -115,6 +115,9 @@ const passwordError = ref('')
 const loginError = ref('')
 const isSubmitting = ref(false)
 
+// Get redirect URL from query parameter
+const redirectTo = router.currentRoute.value.query.redirect || '/'
+
 // Email validation
 const validateEmail = () => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -203,8 +206,8 @@ const handleLogin = async () => {
       })
     }
 
-    // Success - redirect to homepage
-    router.push('/')
+    // Success - redirect to original page or homepage
+    router.push(redirectTo)
   } catch (error) {
     loginError.value = error.message || 'Invalid email or password. Please try again.'
   } finally {

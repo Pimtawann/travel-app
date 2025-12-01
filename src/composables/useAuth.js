@@ -21,9 +21,12 @@ export function useAuth() {
       // Decode token to get user info (JWT token contains user data)
       try {
         const payload = JSON.parse(atob(token.split('.')[1]))
+        // Prioritize localStorage displayName over token payload
+        // This ensures updated displayName persists across page reloads
+        const displayName = localStorage.getItem('displayName') || payload.displayName || payload.sub
         user.value = {
           email: payload.sub,
-          displayName: payload.displayName || localStorage.getItem('displayName') || payload.sub
+          displayName: displayName
         }
       } catch (error) {
         console.error('Failed to decode token:', error)

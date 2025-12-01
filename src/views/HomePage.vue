@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SearchBar from '../components/SearchBar.vue'
 import TripCard from '../components/TripCard.vue'
@@ -9,6 +10,7 @@ import { trio } from 'ldrs'
 
 trio.register()
 
+const route = useRoute()
 const searchQuery = ref('')
 const trips = ref([])
 const filteredTrips = ref([])
@@ -18,6 +20,10 @@ const itemsPerPage = 10
 
 onMounted(async () => {
   await fetchTrips()
+  if (route.query.search) {
+    searchQuery.value = route.query.search
+    await handleSearch(route.query.search)
+  }
 })
 
 const fetchTrips = async () => {
