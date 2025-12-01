@@ -136,6 +136,21 @@ export const tripsAPI = {
       throw new Error(error.response?.data?.message || 'Failed to create trip')
     }
   },
+
+  async updateTrip(id, tripData) {
+    try {
+      const token = tokenService.getToken()
+      const response = await axiosInstance.put(`/api/trips/${id}`, tripData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Failed to update trip:', error.response?.data || error.message)
+      throw new Error(error.response?.data?.message || 'Failed to update trip')
+    }
+  },
 }
 
 export const userAPI = {

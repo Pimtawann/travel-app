@@ -6,12 +6,34 @@
     <main class="flex-1 p-8">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-4xl md:text-5xl font-bold text-primary mb-2">Create New Trip</h1>
-        <p class="text-xl text-secondary">Share your travel adventure with the world</p>
+        <h1 class="text-4xl md:text-5xl font-bold text-primary mb-2">Edit Trip</h1>
+        <p class="text-xl text-secondary">Update your travel adventure details</p>
+      </div>
+
+      <!-- Loading State -->
+      <div v-if="isLoading" class="flex justify-center items-center min-h-[50vh]">
+        <div class="text-center">
+          <l-trio size="40" speed="1.3" color="#38220f"></l-trio>
+          <p class="mt-4 text-secondary text-2xl">Loading trip...</p>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div v-else-if="loadError" class="flex justify-center items-center min-h-[50vh]">
+        <div class="text-center">
+          <svg class="w-16 h-16 text-red-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+          <h3 class="text-2xl md:text-3xl font-semibold text-primary mb-2">Unable to load trip</h3>
+          <p class="text-secondary mb-6">{{ loadError }}</p>
+          <button @click="goBack" class="px-6 py-3 bg-primary text-background rounded-xl hover:bg-secondary transition-colors duration-200 font-semibold">
+            Go Back
+          </button>
+        </div>
       </div>
 
       <!-- Form -->
-      <div class="max-w-4xl mx-auto">
+      <div v-else class="max-w-4xl mx-auto">
         <div class="bg-white rounded-2xl shadow-lg border-2 border-cream-3 p-8">
           <form @submit.prevent="handleSubmit" class="space-y-3">
             <!-- Title -->
@@ -193,7 +215,7 @@
                 type="submit"
                 :disabled="isSubmitting"
                 class="flex-1 px-6 py-3 bg-primary text-background rounded-xl hover:bg-secondary transition-colors duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
-                {{ isSubmitting ? 'Creating...' : 'Create Trip' }}
+                {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
               </button>
             </div>
           </form>
@@ -213,14 +235,22 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import Sidebar from '../components/Sidebar.vue'
 import Toast from '../components/Toast.vue'
 import { useAuth } from '../composables/useAuth.js'
 import { tripsAPI, fileAPI } from '../api.js'
+import { trio } from 'ldrs'
+
+trio.register()
 
 const router = useRouter()
+const route = useRoute()
 const { isAuthenticated } = useAuth()
+
+const tripId = ref(route.params.id)
+const isLoading = ref(false)
+const loadError = ref('')
 
 const formData = ref({
   title: '',
@@ -262,9 +292,37 @@ onMounted(async () => {
     return
   }
 
+  // Load trip data
+  await loadTripData()
+
   // Initialize Google Places Autocomplete
   initAutocomplete()
 })
+
+const loadTripData = async () => {
+  try {
+    isLoading.value = true
+    loadError.value = ''
+
+    const trip = await tripsAPI.getTripById(tripId.value)
+
+    // Populate form with trip data
+    formData.value = {
+      title: trip.title || '',
+      description: trip.description || '',
+      locationName: '', // We don't have location name from backend
+      latitude: trip.latitude,
+      longitude: trip.longitude,
+      tags: trip.tags || [],
+      photos: trip.photos || []
+    }
+  } catch (err) {
+    console.error('Failed to load trip:', err)
+    loadError.value = 'Unable to load trip data. Please try again or go back.'
+  } finally {
+    isLoading.value = false
+  }
+}
 
 const initAutocomplete = () => {
   // Check if Google Maps API is loaded
@@ -380,7 +438,7 @@ const handleSubmit = async () => {
       hasError = true
     }
 
-    if (!formData.value.locationName.trim() || !formData.value.latitude || !formData.value.longitude) {
+    if (!formData.value.latitude || !formData.value.longitude) {
       errors.value.location = 'Required'
       hasError = true
     }
@@ -411,19 +469,18 @@ const handleSubmit = async () => {
       photos: formData.value.photos
     }
 
-    // Create trip
-    await tripsAPI.createTrip(tripData)
+    // Update trip
+    await tripsAPI.updateTrip(tripId.value, tripData)
 
-    // Show success toast
-    showSuccessToast('Trip created successfully!')
+    showSuccessToast('Trip updated successfully!')
 
     // Redirect to My Trips page after a short delay
     setTimeout(() => {
       router.push('/my-trips')
     }, 1500)
   } catch (err) {
-    console.error('Failed to create trip:', err)
-    error.value = 'Failed to create trip. Please try again.'
+    console.error('Failed to update trip:', err)
+    error.value = 'Failed to save changes. Please try again.'
   } finally {
     isSubmitting.value = false
   }
