@@ -170,7 +170,7 @@ const fetchMyTrips = async () => {
     myTrips.value = data
   } catch (err) {
     console.error('Failed to load trips:', err)
-    error.value = err.message || 'Failed to load your trips'
+    error.value = 'Unable to load your trips'
   } finally {
     isLoading.value = false
   }
@@ -204,7 +204,14 @@ const confirmDelete = async () => {
     closeDeleteModal()
   } catch (err) {
     console.error('Failed to delete trip:', err)
-    alert(err.message || 'Failed to delete trip')
+    // Close modal and show error in a user-friendly way
+    closeDeleteModal()
+    error.value = 'Failed to delete trip. Please try again.'
+
+    // Clear error after 5 seconds
+    setTimeout(() => {
+      error.value = null
+    }, 5000)
   } finally {
     isDeleting.value = false
   }

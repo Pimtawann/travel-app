@@ -1,18 +1,30 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'https://travel-app-api-41c3.onrender.com'
+const API_BASE_URL = 'https://travel-app-api-4bil.onrender.com'
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 60000, // 60 seconds timeout to handle Render.com cold starts
 })
 
-// Response interceptor to handle token expiration
+// Request interceptor to add retry logic
+axiosInstance.interceptors.request.use(
+  (config) => {
+    config.metadata = { startTime: new Date() }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
+// Response interceptor to handle token expiration and retries
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const config = error.config
+
     // Check if error is due to unauthorized (401) - token expired
     if (error.response && error.response.status === 401) {
       // Clear token and user data
@@ -21,7 +33,30 @@ axiosInstance.interceptors.response.use(
 
       // Redirect to homepage
       window.location.href = '/'
+      return Promise.reject(error)
     }
+
+    // Retry logic for network errors or timeouts
+    if (!config || !config.retry) {
+      config.retry = 0
+    }
+
+    const shouldRetry =
+      config.retry < 2 && 
+      (!error.response || 
+       error.code === 'ECONNABORTED' || // Timeout
+       error.response.status >= 500) // Server error
+
+    if (shouldRetry) {
+      config.retry += 1
+      console.log(`Retrying request... Attempt ${config.retry}`)
+
+      // Wait before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, 1000 * config.retry))
+
+      return axiosInstance(config)
+    }
+
     return Promise.reject(error)
   }
 )
