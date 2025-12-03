@@ -1,13 +1,13 @@
 <template>
   <div class="flex min-h-screen bg-background">
     <!-- Sidebar -->
-    <Sidebar />
+    <Sidebar class="hidden md:flex" />
 
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-4 md:p-8">
       <!-- Header -->
-      <div class="mb-8">
-        <h1 class="text-4xl md:text-5xl font-bold text-primary mb-2">Profile</h1>
-        <p class="text-xl text-secondary">Manage your account information</p>
+      <div class="mb-6 md:mb-8">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-2">Profile</h1>
+        <p class="text-base md:text-xl text-secondary">Manage your account information</p>
       </div>
 
       <!-- Loading State -->
@@ -26,9 +26,9 @@
       </div>
 
       <!-- Profile Form -->
-      <div v-else class="max-w-2xl mx-auto">
-        <div class="bg-white rounded-2xl shadow-lg border-2 border-cream-3 p-8">
-          <form @submit.prevent="handleSubmit" class="space-y-6">
+      <div v-else class="md:max-w-2xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-lg border-2 border-cream-3 p-4 md:p-8">
+          <form @submit.prevent="handleSubmit" class="space-y-4 md:space-y-6">
             <!-- Email (Read-only) -->
             <div>
               <label class="block text-sm font-semibold text-primary mb-2">
@@ -64,7 +64,7 @@
               </label>
 
               <!-- Password Display -->
-              <div v-if="!isChangingPassword" class="flex items-center gap-3">
+              <div v-if="!isChangingPassword" class="flex flex-col md:flex-row items-stretch md:items-center gap-3">
                 <input
                   type="password"
                   value="........"
@@ -154,7 +154,7 @@
             </div>
 
             <!-- Buttons -->
-            <div class="flex gap-4">
+            <div class="flex flex-col md:flex-row gap-3 md:gap-4">
               <button
                 type="button"
                 @click="resetForm"
@@ -315,6 +315,13 @@ const handleSubmit = async () => {
     localStorage.setItem('displayName', newDisplayName)
 
     console.log('Updated user displayName:', newDisplayName)
+
+    // Redirect to homepage for screens smaller than md (768px)
+    if (window.innerWidth < 768) {
+      setTimeout(() => {
+        router.push('/')
+      }, 1000) // Wait 1 second to show toast before redirecting
+    }
   } catch (err) {
     console.error('Failed to update profile:', err)
     updateError.value = err.message || 'Failed to update profile'
@@ -344,15 +351,5 @@ const showSuccessToast = (message) => {
 
 const closeToast = () => {
   showToast.value = false
-}
-
-const formatDate = (dateString) => {
-  if (!dateString) return '-'
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-GB', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
 }
 </script>
