@@ -4,7 +4,7 @@ import { tokenService } from '../api.js'
 const user = ref(null)
 
 export function useAuth() {
-  const isAuthenticated = computed(() => !!user.value)
+  const isAuthenticated = computed(() => !!tokenService.getToken())
 
   const setUser = (userData) => {
     user.value = userData

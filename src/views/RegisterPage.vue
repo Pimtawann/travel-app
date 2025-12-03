@@ -251,12 +251,13 @@ const handleRegister = async () => {
     // Redirect to homepage
     router.push('/')
   } catch (error) {
-    const errorMessage = error.message || 'Registration failed'
+    console.error('Registration error:', error)
+    const errorMessage = error.message || ''
 
     if (errorMessage.toLowerCase().includes('email') && errorMessage.toLowerCase().includes('already exists')) {
-      emailError.value = 'Email already registered'
+      emailError.value = 'This email is already registered. Please use a different email or try logging in.'
     } else {
-      registerError.value = errorMessage
+      registerError.value = 'Registration failed. Please check your information and try again.'
     }
   } finally {
     isSubmitting.value = false
