@@ -209,7 +209,8 @@ const handleLogin = async () => {
     // Success - redirect to original page or homepage
     router.push(redirectTo)
   } catch (error) {
-    loginError.value = error.message || 'Invalid email or password. Please try again.'
+    console.error('Login error:', error)
+    loginError.value = 'Invalid email or password. Please try again.'
   } finally {
     isSubmitting.value = false
   }

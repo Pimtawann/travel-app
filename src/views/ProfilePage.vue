@@ -240,7 +240,7 @@ const fetchProfile = async () => {
     formData.value.displayName = data.displayName || ''
   } catch (err) {
     console.error('Failed to load profile:', err)
-    error.value = err.message || 'Failed to load profile'
+    error.value = 'Unable to load your profile. Please try refreshing the page.'
   } finally {
     isLoading.value = false
   }
@@ -324,7 +324,7 @@ const handleSubmit = async () => {
     }
   } catch (err) {
     console.error('Failed to update profile:', err)
-    updateError.value = err.message || 'Failed to update profile'
+    updateError.value = 'Failed to update profile. Please check your information and try again.'
   } finally {
     isSubmitting.value = false
   }
