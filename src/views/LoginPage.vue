@@ -65,12 +65,6 @@
             </div>
           </div>
 
-          <div class="text-right">
-            <a href="#" class="text-sm text-secondary hover:text-primary transition-colors duration-200">
-              Forgot password?
-            </a>
-          </div>
-
           <button
             type="submit"
             :disabled="isSubmitting"
