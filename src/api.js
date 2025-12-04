@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 60000, // 60 seconds timeout to handle Render.com cold starts
+  timeout: 90000, // 90 seconds timeout to handle Render.com cold starts and DB connection
 })
 
 // Request interceptor to add retry logic
